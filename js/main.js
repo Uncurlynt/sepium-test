@@ -1,4 +1,25 @@
 $(function () {
+    const mobileMedia = window.matchMedia("(max-width: 767px)");
+
+    function syncAutoplay(swiperInstance) {
+        if (!swiperInstance || !swiperInstance.autoplay) return;
+
+        // Прокрутка на тлф
+        if (mobileMedia.matches) {
+            if (!swiperInstance.autoplay.running) {
+                swiperInstance.autoplay.start();
+            }
+            return;
+        }
+
+        // Прокрутка на ПеКа
+        if (swiperInstance.autoplay.running) {
+            swiperInstance.autoplay.stop();
+        }
+    }
+
+    const swipers = [];
+
     $(".product-unit").each(function () {
         const $card = $(this);
         let swiper = null;
@@ -23,18 +44,28 @@ $(function () {
                     }
                 },
 
-                breakpoints: {
-                    0: {
-                        autoplay: {
-                            delay: 3000,
-                            disableOnInteraction: false
-                        }
+                autoplay: {
+                    delay: 3000,
+                    disableOnInteraction: false,
+                    pauseOnMouseEnter: false
+                },
+
+                on: {
+                    init: function (s) {
+                        syncAutoplay(s);
                     },
-                    768: {
-                        autoplay: false
+                    breakpoint: function (s) {
+                        syncAutoplay(s);
+                    },
+                    resize: function (s) {
+                        syncAutoplay(s);
                     }
                 }
             });
+
+            swipers.push(swiper);
+
+            syncAutoplay(swiper);
         }
 
         // Логика клика
@@ -96,4 +127,16 @@ $(function () {
             $btn.addClass("is-active").attr("aria-pressed", "true");
         });
     });
+
+    function handleMediaChange() {
+        swipers.forEach(function (s) {
+            syncAutoplay(s);
+        });
+    }
+
+    if (typeof mobileMedia.addEventListener === "function") {
+        mobileMedia.addEventListener("change", handleMediaChange);
+    } else if (typeof mobileMedia.addListener === "function") {
+        mobileMedia.addListener(handleMediaChange);
+    }
 });

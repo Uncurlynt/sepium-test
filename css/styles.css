@@ -80,12 +80,25 @@ ul { list-style: none; padding: 0; margin: 0; }
     inset: 0;
 }
 
+.product-unit__carousel,
+.product-unit__carousel .swiper-wrapper,
+.product-unit__carousel .swiper-slide {
+    height: 100%;
+}
+
+@supports (aspect-ratio: 3 / 2) {
+    .product-unit__top {
+        padding-top: 0;
+        aspect-ratio: 3 / 2;
+    }
+}
+
 .product-unit__img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
-
 
 .product-unit__controls {
     position: absolute;
